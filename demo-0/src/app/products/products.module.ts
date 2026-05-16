@@ -8,6 +8,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ProductPageComponent } from './product-page/product-page.component';
 import { StoreModule } from '@ngrx/store';
 import { productsReducer } from './state/producs.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { ProductsEffects } from './state/products.effects';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,8 @@ import { productsReducer } from './state/producs.reducer';
     CommonModule,
     ProductsRoutingModule,
     ReactiveFormsModule,
-    StoreModule.forFeature('products', productsReducer)
+    StoreModule.forFeature('products', productsReducer),
+    EffectsModule.forFeature(ProductsEffects),
   ]
 })
 export class ProductsModule { }
