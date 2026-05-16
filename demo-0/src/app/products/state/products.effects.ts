@@ -57,7 +57,9 @@ export class ProductsEffects {
       concatMap(({ product }) =>
         this.productsService.update(product).pipe(
           map(() =>
-            ProductsApiActions.updateProductSuccess({ product: product }),
+            ProductsApiActions.updateProductSuccess({
+              update: { id: product.id, changes: product },
+            }),
           ),
           catchError((error) =>
             of(ProductsApiActions.updateProductFailure({ message: error })),
@@ -81,15 +83,16 @@ export class ProductsEffects {
     ),
   );
 
-  redirectToProductsPage = createEffect(() =>
-    this.actions$.pipe(
-      ofType(
-        ProductsApiActions.addProductSuccess,
-        ProductsApiActions.updateProductSuccess,
-        ProductsApiActions.deleteProductSuccess,
+  redirectToProductsPage = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(
+          ProductsApiActions.addProductSuccess,
+          ProductsApiActions.updateProductSuccess,
+          ProductsApiActions.deleteProductSuccess,
+        ),
+        tap(() => this.router.navigate(['/products'])),
       ),
-      tap(() => this.router.navigate(['/products'])),
-    ),
     { dispatch: false },
   );
 
