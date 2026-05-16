@@ -1,35 +1,38 @@
-import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { ProductsState } from "./producs.reducer";
-import { sumProducts } from "src/app/utils/sum-products";
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { ProductsState } from './producs.reducer';
+import { sumProducts } from 'src/app/utils/sum-products';
+import { getRouterSelectors } from '@ngrx/router-store';
 
-export const selectProductsState = createFeatureSelector<ProductsState>('products');
+export const selectProductsState =
+  createFeatureSelector<ProductsState>('products');
 
 export const selectProducts = createSelector(
-    selectProductsState,
-    (productsState) => productsState.products
+  selectProductsState,
+  (productsState) => productsState.products,
 );
 
 export const selectProductsLoading = createSelector(
-    selectProductsState,
-    (productsState) => productsState.loading
+  selectProductsState,
+  (productsState) => productsState.loading,
 );
 
 export const selectShowProductsCode = createSelector(
-    selectProductsState,
-    (productsState) => productsState.showProductCode
+  selectProductsState,
+  (productsState) => productsState.showProductCode,
 );
 
-export const selectProductsTotal = createSelector(
-    selectProducts,
-    sumProducts
-);
+export const selectProductsTotal = createSelector(selectProducts, sumProducts);
 
 export const selectProductsErrorMessage = createSelector(
-    selectProductsState,
-    (productsState) => productsState.errorMessage
+  selectProductsState,
+  (productsState) => productsState.errorMessage,
 );
 
-export const selectProductsById = ( id: string ) => createSelector(
+export const { selectRouteParams } = getRouterSelectors();
+
+export const selectProductsById =  createSelector(
     selectProducts,
-    (products) => products.find(product => product.id === parseInt(id)
-));
+    selectRouteParams,
+    (products, { id }) =>
+    products.find((product) => product.id === parseInt(id)),
+  );

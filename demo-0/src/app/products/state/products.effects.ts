@@ -2,14 +2,22 @@ import { Injectable } from '@angular/core';
 import { ProductsService } from '../products.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ProductsApiActions, ProductsPageActions } from './products.actions';
-import { catchError, concatMap, exhaustMap, map, mergeMap, of } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  exhaustMap,
+  map,
+  mergeMap,
+  of,
+  tap,
+} from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class ProductsEffects {
-  constructor(
-    private actions$: Actions,
-    private productsService: ProductsService,
-  ) {}
+  ngrxOnInitEffects() {
+    return ProductsPageActions.loadProducts();
+  }
 
   loadProducts$ = createEffect(() =>
     this.actions$.pipe(
@@ -48,8 +56,8 @@ export class ProductsEffects {
       ofType(ProductsPageActions.updateProduct),
       concatMap(({ product }) =>
         this.productsService.update(product).pipe(
-          map((updatedProduct) =>
-            ProductsApiActions.updateProductSuccess({ product: updatedProduct }),
+          map(() =>
+            ProductsApiActions.updateProductSuccess({ product: product }),
           ),
           catchError((error) =>
             of(ProductsApiActions.updateProductFailure({ message: error })),
@@ -64,9 +72,7 @@ export class ProductsEffects {
       ofType(ProductsPageActions.deleteProduct),
       mergeMap(({ id }) =>
         this.productsService.delete(id).pipe(
-          map(() =>
-            ProductsApiActions.deleteProductSuccess({ id }),
-          ),
+          map(() => ProductsApiActions.deleteProductSuccess({ id })),
           catchError((error) =>
             of(ProductsApiActions.deleteProductFailure({ message: error })),
           ),
@@ -74,4 +80,22 @@ export class ProductsEffects {
       ),
     ),
   );
+
+  redirectToProductsPage = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        ProductsApiActions.addProductSuccess,
+        ProductsApiActions.updateProductSuccess,
+        ProductsApiActions.deleteProductSuccess,
+      ),
+      tap(() => this.router.navigate(['/products'])),
+    ),
+    { dispatch: false },
+  );
+
+  constructor(
+    private actions$: Actions,
+    private productsService: ProductsService,
+    private router: Router,
+  ) {}
 }

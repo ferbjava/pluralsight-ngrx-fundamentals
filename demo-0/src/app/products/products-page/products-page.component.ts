@@ -23,10 +23,6 @@ export class ProductsPageComponent {
     });
   }
 
-  ngOnInit() {
-    this.store.dispatch(ProductsPageActions.loadProducts());
-  }
-
   toggleShowProductCode() {
     // this.showProductCode = !this.showProductCode;
     this.store.dispatch(ProductsPageActions.toggleShowProductCode());
