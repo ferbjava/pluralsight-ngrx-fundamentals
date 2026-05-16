@@ -28,3 +28,8 @@ export const selectProductsErrorMessage = createSelector(
     selectProductsState,
     (productsState) => productsState.errorMessage
 );
+
+export const selectProductsById = ( id: string ) => createSelector(
+    selectProducts,
+    (products) => products.find(product => product.id === parseInt(id)
+));
